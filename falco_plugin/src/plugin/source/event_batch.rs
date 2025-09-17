@@ -29,7 +29,10 @@ impl EventBatch<'_> {
     pub fn add(&mut self, event: impl EventToBytes) -> std::io::Result<()> {
         let mut event_buf =
             bumpalo::collections::Vec::with_capacity_in(event.binary_size(), self.alloc);
+        let size_before = event.binary_size();
         event.write(&mut event_buf)?;
+        let size_after = event_buf.len();
+        assert_eq!(size_before, size_after);
         self.pointers.push(event_buf.as_ptr());
         Ok(())
     }
