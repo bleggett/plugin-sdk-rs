@@ -29,15 +29,7 @@ impl EventBatch<'_> {
     pub fn add(&mut self, event: impl EventToBytes) -> std::io::Result<()> {
         let mut event_buf =
             bumpalo::collections::Vec::with_capacity_in(event.binary_size(), self.alloc);
-        let size_before = event.binary_size();
         event.write(&mut event_buf)?;
-        let size_after = event_buf.len();
-
-        // Temporary fix: pad buffer to expected size with zeros if write() wrote less
-        if size_after < size_before {
-            event_buf.resize(size_before, 0);
-        }
-
         self.pointers.push(event_buf.as_ptr());
         Ok(())
     }

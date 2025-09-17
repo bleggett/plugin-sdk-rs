@@ -27,7 +27,7 @@ impl<T: Debug> Debug for Event<T> {
 impl<T: PayloadToBytes> EventToBytes for Event<T> {
     #[inline]
     fn binary_size(&self) -> usize {
-        26 + self.params.binary_size()
+        self.params.binary_size()  // PayloadToBytes already includes header size
     }
 
     #[inline]
